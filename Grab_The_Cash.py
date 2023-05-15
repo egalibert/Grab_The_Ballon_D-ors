@@ -2,16 +2,35 @@ import pygame
 from random import *
 
 pygame.init()
-leveys = 640
-korkeus = 480
+leveys = 700
+korkeus = 520
 naytto = pygame.display.set_mode((leveys, korkeus))
 	#Kuvat
-robo = pygame.image.load("robo.png")
-coin = pygame.image.load("kolikko.png")
-hirvio = pygame.image.load("hirvio.png")
+
+	#Original Version
+# robo = pygame.image.load("robo.png")
+# coin = pygame.image.load("kolikko.png")
+# hirvio = pygame.image.load("hirvio.png")
+
+
+	#Football one
+robo = pygame.image.load("ronaldo.png")
+robo = pygame.transform.scale(robo, (60, 110))
+
+coin = pygame.image.load("bdor.png")
+coin = pygame.transform.scale(coin, (40, 40))
+
+hirvio = pygame.image.load("messi.png")
+hirvio = pygame.transform.scale(hirvio, (80, 90))
+h_w = hirvio.get_width()
+h_h = hirvio.get_height()
 
 robo_leveys = robo.get_width()
 robo_korkeus = robo.get_height()
+
+POISSA = 0
+KAYNNISSA = 1
+
 	#Fontit
 fontti = pygame.font.SysFont("Arial", 36)
 iso = pygame.font.SysFont("Arial", 100)
@@ -19,8 +38,8 @@ iso = pygame.font.SysFont("Arial", 100)
 kello = pygame.time.Clock()
 class Hirvio:
 	def __init__(self):
-		self.x = randint(0, 640 - 50)
-		self.y = randint(-1500, -200)
+		self.x = randint(0, leveys - 50)
+		self.y = randint(-1500, -300)
 		self.velocity = 2
 		self.finished = False
 
@@ -29,14 +48,14 @@ class Hirvio:
 			self.velocity += counter / 1000
 		if (counter >= 90):
 			self.velocity += 1
-		if self.y < 700:
+		if self.y < korkeus + 100:
 			self.y += self.velocity
-		if self.y > (480 - 70) or self.y > 480:
+		if self.y > (korkeus - 50) or self.y > korkeus:
 			self.finished = True
 
 class Coins:
 	def __init__(self):
-		self.x = randint(0, 640 - 50)
+		self.x = randint(0, leveys - 50)
 		self.y = randint(-1500, -300)
 		self.finished = False
 		self.velocity = 2
@@ -44,9 +63,9 @@ class Coins:
 	def tiputa_kolikko(self, counter :int):
 		if counter >= 10:
 			self.velocity += counter / 10000
-		if self.y < 700:
+		if self.y < korkeus + 100:
 			self.y += self.velocity
-		if self.y > 480 - 50 or self.y > 480:
+		if self.y > korkeus - 50 or self.y > korkeus:
 			self.finished = True
 
 class Robootti:
@@ -60,19 +79,20 @@ class Robootti:
 		self.velocity = 1.0
 
 	def liikuta_roboa(self, robootti):
-		if self.oikealle and self.x + robo.get_width() <= 640:
+		if self.oikealle and self.x < leveys - robo_leveys:
 			self.x += 3
 		if self.vasemmalle and self.x >= 0:
 			self.x -= 3
 		if self.ylos and self.y >= 0:
 			self.y -= 3
-		if self.alas and self.y + robo.get_height() <= 480:
+		if self.alas and self.y < korkeus - robo_korkeus:
 			self.y += 3
 
 class GrabtheCash:
 	def __init__(self):
 		pygame.display.set_caption("Grab The Ca$h")
 
+		self.state = POISSA
 		self.robo_health = 5
 		self.p1 = Robootti(leveys / 2, korkeus / 2)
 		self.counter = 0
@@ -115,8 +135,8 @@ class GrabtheCash:
 		
 	def detect_collision_hirvio(self):
 		for mon in self.mon_list:
-			if self.p1.x < mon.x + hirvio.get_width() and mon.x < self.p1.x + robo_leveys and \
-				self.p1.y < mon.y + hirvio.get_height() and mon.y < self.p1.y + robo_korkeus:
+			if self.p1.x + robo_leveys > mon.x + (h_w / 4) and self.p1.x < mon.x + h_w - (h_w / 3) and \
+				self.p1.y + robo_korkeus > mon.y + (h_h / 5) and self.p1.y < mon.y + h_h - (h_h / 5):
 					self.mon_list.remove(mon)
 					mon = Hirvio()
 					self.mon_list.append(mon)
@@ -129,22 +149,13 @@ class GrabtheCash:
 	def endScreen(self):
 		run = True
 		while run:
-			pygame.time.delay(100)
+			# pygame.time.delay(100)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
-					run = False
 					pygame.quit()
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_r:
-						run = False
-						self.counter = 0
-						self.robo_health = 5
-						self.oikealle = False
-						self.vasemmalle = False
-						self.ylos = False
-						self.alas = False
-						naytto.fill((255, 0, 255))
-						self.pyorita()
+						main()
 						
 			largeFont = pygame.font.SysFont('comicsans', 80) 
 			currentScore = largeFont.render(f"Final Score: {self.counter}", True, (0, 0, 0))
@@ -198,27 +209,80 @@ class GrabtheCash:
 			naytto.blit(hirvio, (monster.x, monster.y))
 			self.detect_collision_hirvio()
 
+	def start_menu(self):
+		naytto.fill((100, 200, 100))
+		i_str = "COLLECT COINS TO EARN POINTS"
+		i_text = fontti.render(i_str, True, (0, 0, 0))
+		i_rect = i_text.get_rect()
+		i_rect.y = 10
+		i_rect.centerx = naytto.get_rect().centerx
+		rule_str = "AVOID THE GHOSTS, HIT ONE AND YOU LOSE A LIFE"
+		rule_text = fontti.render(rule_str, True, (0, 0, 0))
+		rule_rect = rule_text.get_rect()
+		rule_rect.y = 60
+		rule_rect.centerx = naytto.get_rect().centerx
+		life_str = "YOU HAVE 5 LIVES"
+		life_text = fontti.render(life_str, True, (0, 0, 0))
+		life_rect = life_text.get_rect()
+		life_rect.y = 110
+		life_rect.centerx = naytto.get_rect().centerx
+		inten_str = "INTENSITY INCREASES EVERY 5 COINS"
+		inten_text = fontti.render(inten_str, True, (0, 0, 0))
+		inten_rect = inten_text.get_rect()
+		inten_rect.y = 160
+		inten_rect.centerx = naytto.get_rect().centerx
+		g_str = "ROBO GAME!"
+		g_text = iso.render(g_str, True, (255, 255, 0))
+		g_rect = g_text.get_rect()
+		g_rect.center = naytto.get_rect().center
+		ctrl_str = "USE ARROW KEYS TO MOVE"
+		space_str = "PRESS 'SPACE' TO START"
+		esc_str = "PRESS 'q' or 'esc' TO ESCAPE"
+		ctrl_text = fontti.render(ctrl_str, True, (0, 0, 0))
+		ctrl_rect = ctrl_text.get_rect()
+		ctrl_rect.y = naytto.get_rect().centery + 70
+		ctrl_rect.centerx = naytto.get_rect().centerx
+		esc_text = fontti.render(esc_str, True, (0, 0, 0))
+		esc_rect = esc_text.get_rect()
+		esc_rect.y = naytto.get_rect().centery + 150
+		esc_rect.centerx = naytto.get_rect().centerx
+		space_text = fontti.render(space_str, True, (0, 0, 0))
+		space_rect = space_text.get_rect()
+		space_rect.centerx = naytto.get_rect().centerx
+		space_rect.y = naytto.get_rect().centery + 230
+		naytto.blit(g_text, (g_rect))
+		naytto.blit(space_text, (space_rect))
+		naytto.blit(esc_text, (esc_rect))
+		naytto.blit(i_text, (i_rect))
+		naytto.blit(rule_text, (rule_rect))
+		naytto.blit(life_text, (life_rect))
+		naytto.blit(inten_text, (inten_rect))
+		naytto.blit(ctrl_text, (ctrl_rect))
+
 	def pyorita(self):
 		while (True):
 			self.tapahtumat()
-			naytto.fill((255, 0, 255))
-			self.p1.liikuta_roboa(self)
-			self.tarkasta_hirvio()
-			self.tarkasta_kolikko()
-			self.detect_collision_hirvio()
-			self.detect_collision_coin()
+			if self.state == POISSA:
+				self.start_menu()
+			if self.state == KAYNNISSA:
+				naytto.fill((50, 170, 50))
+				self.p1.liikuta_roboa(self)
 
-			if self.robo_health == 0:
-				self.endScreen()
-			if self.counter == 100:
-				self.endScreen()
+				if self.robo_health == 0:
+					self.endScreen()
+				if self.counter == 100:
+					self.endScreen()
+				self.tarkasta_hirvio()
+				self.tarkasta_kolikko()
+				self.detect_collision_hirvio()
+				self.detect_collision_coin()
 
 			self.teksti = fontti.render(f"Counter: {self.counter}", True, (0, 0, 0))
 			self.health = fontti.render(f"Health: {self.robo_health}", True, (0, 0, 0))
 
 			naytto.blit(robo, (self.p1.x, self.p1.y))
-			naytto.blit(self.teksti, (450,430))
-			naytto.blit(self.health, (15,430))
+			naytto.blit(self.teksti, (leveys - self.teksti.get_width() - 15,korkeus - 50))
+			naytto.blit(self.health, (15,korkeus - 50))
 			pygame.display.flip()
 			kello.tick(60)
 
