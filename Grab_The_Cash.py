@@ -27,6 +27,13 @@ coin = pygame.transform.scale(coin, (40, 40))
 hirvio = pygame.image.load("messi.png")
 hirvio = pygame.transform.scale(hirvio, (80, 90))
 
+	#Power_Ups
+boxers = pygame.image.load("boxer.png")
+boxers = pygame.transform.scale(boxers, (30, 30))
+
+shoes = pygame.image.load("nappikset.png")
+shoes = pygame.transform.scale(shoes, (30, 30))
+
 h_w = hirvio.get_width()
 h_h = hirvio.get_height()
 
@@ -44,6 +51,24 @@ font = pygame.font.SysFont('arial', 40)
 
 kello = pygame.time.Clock()
 
+class PowerUp:
+	def __init__(self):
+		self.valinta = randint(1, 2)
+		self.x = randint(0, leveys - 50)
+		self.y = randint(-1500, -300)
+		self.velocity = 2
+		self.finished = False
+
+	def tiputa_power_up(self, counter :int, level :float):
+		if counter >= 10:
+			self.velocity += counter / 5000
+
+		if self.y < korkeus + 100:
+			self.y += self.velocity 
+		if self.y > (korkeus - 50) or self.y > korkeus:
+			self.finished = True
+
+
 class Hirvio:
 	def __init__(self):
 		self.x = randint(0, leveys - 50)
@@ -52,7 +77,6 @@ class Hirvio:
 		self.finished = False
 
 	def tiputa_hirvio(self, counter :int, level :float):
-
 		if counter >= 10:
 			self.velocity += counter / 5000
 		if counter >= 90:
@@ -71,7 +95,6 @@ class Coins:
 		self.velocity = 2
 		
 	def tiputa_kolikko(self, counter :int, level :float):
-
 		if counter >= 10:
 			self.velocity += counter / 10000
 
@@ -92,13 +115,13 @@ class Robootti:
 
 	def liikuta_roboa(self, robootti):
 		if self.oikealle and self.x < leveys - robo_leveys:
-			self.x += 3
+			self.x += 3 * self.velocity
 		if self.vasemmalle and self.x >= 0:
-			self.x -= 3
+			self.x -= 3 * self.velocity
 		if self.ylos and self.y >= 0:
-			self.y -= 3
+			self.y -= 3 * self.velocity
 		if self.alas and self.y < korkeus - robo_korkeus:
-			self.y += 3
+			self.y += 3 * self.velocity
 
 class GrabtheCash:
 	def __init__(self):
@@ -107,9 +130,12 @@ class GrabtheCash:
 		self.state = POISSA
 		self.robo_health = 5
 		self.p1 = Robootti(leveys / 2, korkeus / 2)
-		self.counter = 0
+		self.counter = 48
 		self.level = 0
 		self.cr7_mode = False
+		self.r_leveys = robo_leveys
+		self.r_korkeus = robo_korkeus
+		self.robo = pygame.transform.scale(robo, (self.r_leveys, self.r_korkeus))
 
 			#Fontit
 		self.teksti = fontti.render(f"Counter: {self.counter}", True, (0, 0, 0))
@@ -135,14 +161,21 @@ class GrabtheCash:
 			mon = Hirvio()
 			self.mon_list.append(mon)
 
+			#Power_upit
+		self.power_upit = 3
+		self.power_up_lista = []
+		for p in range(self.power_upit):
+			p = PowerUp()
+			self.power_up_lista.append(p)
+
 	def detect_collision_coin(self):
 		while self.coins_made < self.kolikoita:
 			c = Coins()
 			self.kolikot.append(c)
 			self.coins_made += 1
 		for c in self.kolikot:
-			if self.p1.x < c.x + coin.get_width() and c.x < self.p1.x + robo_leveys and \
-				self.p1.y < c.y + coin.get_height() and c.y < self.p1.y + robo_korkeus:
+			if self.p1.x < c.x + coin.get_width() and c.x < self.p1.x + self.r_leveys and \
+				self.p1.y < c.y + coin.get_height() and c.y < self.p1.y + self.r_korkeus:
 					self.kolikot.remove(c)
 					self.counter += 1
 					self.coins_made -= 1
@@ -152,8 +185,8 @@ class GrabtheCash:
 		
 	def detect_collision_hirvio(self):
 		for mon in self.mon_list:
-			if self.p1.x + robo_leveys > mon.x + (h_w / 4) and self.p1.x < mon.x + h_w - (h_w / 3) and \
-				self.p1.y + robo_korkeus > mon.y + (h_h / 5) and self.p1.y < mon.y + h_h - (h_h / 5):
+			if self.p1.x + self.r_leveys > mon.x + (h_w / 4) and self.p1.x < mon.x + h_w - (h_w / 3) and \
+				self.p1.y + self.r_korkeus > mon.y + (h_h / 5) and self.p1.y < mon.y + h_h - (h_h / 5):
 					self.mon_list.remove(mon)
 					mon = Hirvio()
 					self.mon_list.append(mon)
@@ -162,6 +195,27 @@ class GrabtheCash:
 				self.mon_list.remove(mon)
 				mon = Hirvio()
 				self.mon_list.append(mon)
+
+	def detect_collision_power(self):
+		for p_up in self.power_up_lista:
+			if self.p1.x + self.r_leveys > p_up.x + (shoes.get_width() / 4) and self.p1.x < p_up.x + shoes.get_width() - (shoes.get_width() / 3) and \
+				self.p1.y + self.r_korkeus > p_up.y + (shoes.get_height() / 5) and self.p1.y < p_up.y + shoes.get_height()- (shoes.get_height() / 3):
+					if (p_up.valinta == 1):
+						self.p1.velocity += 0.2
+					if p_up.valinta == 2:
+						# self.robot = pygame.transform.scale(robo, (100, 150))
+						self.r_leveys /= 1.1
+						self.r_korkeus /= 1.1
+						self.robo = pygame.transform.scale(robo, (self.r_leveys, self.r_korkeus))
+
+
+					self.power_up_lista.remove(p_up)
+					p_up = PowerUp()
+					self.power_up_lista.append(p_up)
+			if p_up.finished:
+				self.power_up_lista.remove(p_up)
+				p_up = PowerUp()
+				self.power_up_lista.append(p_up)
 
 	def endScreen(self):
 		run = True
@@ -251,24 +305,28 @@ class GrabtheCash:
 			naytto.blit(coin, (kolikko.x, kolikko.y))
 			self.detect_collision_coin()
 
-	# def make_coin_list(self):
-	# 	self.kolikoita = 40
-	# 	for i in range(self.kolikoita):
-	# 		i = Coins()
-	# 		self.kolikot.append(i)
+	def tarkasta_power_up(self):
+		for p_up in self.power_up_lista:
+			p_up.tiputa_power_up(self.counter, self.level)
+			if (p_up.valinta == 1 and self.counter > 30):
+				naytto.blit(shoes, (p_up.x, p_up.y))
+			if (p_up.valinta == 2 and self.counter > 50):
+				naytto.blit(boxers, (p_up.x, p_up.y))
+			
+			self.detect_collision_power()
+
 
 	def tarkasta_hirvio(self):
 		for monster in self.mon_list:
 			monster.tiputa_hirvio(self.counter, self.level)
-
 			naytto.blit(hirvio, (monster.x, monster.y))
 			self.detect_collision_hirvio()
 
 	def start_menu(self):
-		# naytto.fill((100, 200, 100))
+
 		naytto.fill((0, 0, 0))
 		title = font.render("Grab The Ballon D'ors", True, (200, 200, 0))
-		# start_button = font.render('Start', True, (255, 255, 255))
+
 		instructions = fontti.render("Use arrows to move, dodge Messi", True, (255, 255, 255))
 		info = fontti.render("Start by pressing 1 - 4", True, (255, 255, 255))
 		info2 = fontti.render("1 = Easy, 2 = Medium, 3 = Hard", True, (255, 255, 255))
@@ -304,6 +362,8 @@ class GrabtheCash:
 				self.p1.liikuta_roboa(self)
 				self.tarkasta_hirvio()
 				self.tarkasta_kolikko()
+				self.tarkasta_power_up()
+				self.detect_collision_power()
 				self.detect_collision_hirvio()
 				self.detect_collision_coin()
 
@@ -315,7 +375,7 @@ class GrabtheCash:
 				self.teksti = fontti.render(f"Counter: {self.counter}", True, (0, 0, 0))
 				self.health = fontti.render(f"Health: {self.robo_health}", True, (0, 0, 0))
 
-				naytto.blit(robo, (self.p1.x, self.p1.y))
+				naytto.blit(self.robo, (self.p1.x, self.p1.y))
 				naytto.blit(self.teksti, (leveys - self.teksti.get_width() - 15,korkeus - 50))
 				naytto.blit(self.health, (15,korkeus - 50))
 			pygame.display.flip()
