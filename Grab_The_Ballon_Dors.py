@@ -151,7 +151,7 @@ class GrabtheCash:
 		self.state = POISSA
 		self.robo_health = 5
 		self.p1 = Robootti(leveys / 2, korkeus / 2)
-		self.counter = 48
+		self.counter = 0
 		self.level = 0
 		self.cr7_mode = False
 		self.r_leveys = robo_leveys
@@ -264,8 +264,7 @@ class GrabtheCash:
 				goat2 = fontti.render(f"You are a master gamer!", True, (255, 255, 255))
 			restart = fontti.render(f"Press R to restart:", True, (255,255,255))
 			win = largeFont.render(f"YOU WON!", True, (255, 255, 255))
-			if choose_game == 2:
-				seewy = largeFont.render(f"SIIIII!!", True, (255, 255, 255))
+			seewy = largeFont.render(f"SIIIII!!", True, (255, 255, 255))
 
 			if self.counter < 100:
 				naytto.blit(game_over, (leveys / 2 - (game_over.get_width()/2), korkeus / 2 + (game_over.get_height()/2 - 300)))
@@ -360,7 +359,7 @@ class GrabtheCash:
 		if (choose_game == 2):
 			title = font.render("Grab The Ballon D'ors", True, (200, 200, 0))
 		else:
-			title = font.render("Grab The Cash", True, (200, 200, 0))
+			title = font.render("Grab The Ca$h", True, (200, 200, 0))
 		instructions = fontti.render("Use arrows to move, dodge Messi", True, (255, 255, 255))
 		info = fontti.render("Start by pressing 1 - 4", True, (255, 255, 255))
 		info2 = fontti.render("1 = Easy, 2 = Medium, 3 = Hard", True, (255, 255, 255))
