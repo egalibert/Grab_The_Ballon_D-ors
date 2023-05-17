@@ -1,36 +1,57 @@
 import pygame
+from pygame import mixer
 from random import *
 
+# mixer.init()
 pygame.init()
+
+choose_game = 2
+
+# mixer.music.load('seewy.mp3')
+# mixer.music.set_volume(0.2)
+
+# mixer.music.play()
+
 leveys = 700
 korkeus = 520
 naytto = pygame.display.set_mode((leveys, korkeus))
 
 	#Original Version
-# robo = pygame.image.load("robo.png")
-# coin = pygame.image.load("kolikko.png")
-# hirvio = pygame.image.load("hirvio.png")
+if choose_game == 1:
+	robo = pygame.image.load("robo.png")
+	coin = pygame.image.load("kolikko.png")
+	hirvio = pygame.image.load("hirvio.png")
+	iso_robo = pygame.image.load("robo.png")
+	iso_robo = pygame.transform.scale(robo, (100, 150))
+	iso_hirvio = pygame.image.load("hirvio.png")
+	iso_hirvio = pygame.transform.scale(robo, (200, 150))
+	# iso_robo = pygame.transform.scale(iso_robo, (iso_hirvio.get_width() - 120, iso_hirvio.get_height()))
+	boxers = pygame.image.load("ruuvi.png")
+	boxers = pygame.transform.scale(boxers, (30, 30))
+	shoes = pygame.image.load("nappikset.png")
+	shoes = pygame.transform.scale(shoes, (30, 30))
 
 	#Football one
-robo = pygame.image.load("ronaldo.png")
-robo = pygame.transform.scale(robo, (60, 110))
+if choose_game == 2:
+	robo = pygame.image.load("ronaldo.png")
+	robo = pygame.transform.scale(robo, (60, 110))
 
-iso_robo = pygame.image.load("ronaldo.png")
-iso_hirvio = pygame.image.load("messi.png")
-iso_robo = pygame.transform.scale(iso_robo, (iso_hirvio.get_width() - 120, iso_hirvio.get_height()))
+	iso_robo = pygame.image.load("ronaldo.png")
+	iso_hirvio = pygame.image.load("messi.png")
+	iso_robo = pygame.transform.scale(iso_robo, (iso_hirvio.get_width() - 120, iso_hirvio.get_height()))
 
-coin = pygame.image.load("bdor.png")
-coin = pygame.transform.scale(coin, (40, 40))
+	coin = pygame.image.load("bdor.png")
+	coin = pygame.transform.scale(coin, (40, 40))
 
-hirvio = pygame.image.load("messi.png")
-hirvio = pygame.transform.scale(hirvio, (80, 90))
+	hirvio = pygame.image.load("messi.png")
+	hirvio = pygame.transform.scale(hirvio, (80, 90))
 
-	#Power_Ups
-boxers = pygame.image.load("boxer.png")
-boxers = pygame.transform.scale(boxers, (30, 30))
+		#Power_Ups
+	boxers = pygame.image.load("boxer.png")
+	boxers = pygame.transform.scale(boxers, (30, 30))
 
-shoes = pygame.image.load("nappikset.png")
-shoes = pygame.transform.scale(shoes, (30, 30))
+	shoes = pygame.image.load("nappikset.png")
+	shoes = pygame.transform.scale(shoes, (30, 30))
 
 h_w = hirvio.get_width()
 h_h = hirvio.get_height()
@@ -233,11 +254,16 @@ class GrabtheCash:
  
 			currentScore = fontti.render(f"Final Score: {self.counter}", True, (255, 255, 255))
 			game_over = largeFont.render(f"GAME OVER", True, (255, 255, 255))
-			goat = fontti.render(f"Messi is the Goat...", True, (255, 255, 255))
-			goat2 = fontti.render(f"Ronaldo is the Goat!", True, (255, 255, 255))
+			if choose_game == 2:
+				goat = fontti.render(f"Messi is the Goat...", True, (255, 255, 255))
+				goat2 = fontti.render(f"Ronaldo is the Goat!", True, (255, 255, 255))
+			else:
+				goat = fontti.render(f"Better luck next time!", True, (255, 255, 255))
+				goat2 = fontti.render(f"You are a master gamer!", True, (255, 255, 255))
 			restart = fontti.render(f"Press R to restart:", True, (255,255,255))
 			win = largeFont.render(f"YOU WON!", True, (255, 255, 255))
-			seewy = largeFont.render(f"SIIIII!!", True, (255, 255, 255))
+			if choose_game == 2:
+				seewy = largeFont.render(f"SIIIII!!", True, (255, 255, 255))
 
 			if self.counter < 100:
 				naytto.blit(game_over, (leveys / 2 - (game_over.get_width()/2), korkeus / 2 + (game_over.get_height()/2 - 300)))
@@ -329,12 +355,18 @@ class GrabtheCash:
 
 	def start_menu(self):
 		naytto.fill((0, 0, 0))
-		title = font.render("Grab The Ballon D'ors", True, (200, 200, 0))
+		if (choose_game == 2):
+			title = font.render("Grab The Ballon D'ors", True, (200, 200, 0))
+		else:
+			title = font.render("Grab The Cash", True, (200, 200, 0))
 		instructions = fontti.render("Use arrows to move, dodge Messi", True, (255, 255, 255))
 		info = fontti.render("Start by pressing 1 - 4", True, (255, 255, 255))
 		info2 = fontti.render("1 = Easy, 2 = Medium, 3 = Hard", True, (255, 255, 255))
 		info3 = fontti.render("4 = Impossible (Beware)", True, (255, 255, 255))
-		info4 = fontti.render("7 = CR7GOATMODE", True, (255, 255, 255))
+		if (choose_game == 2):
+			info4 = fontti.render("7 = CR7GOATMODE", True, (255, 255, 255))
+		else:
+			info4 = fontti.render("7 = Pass the game", True, (255, 255, 255))
 
 		naytto.blit(title, (leveys / 2 - title.get_width()/2, korkeus / 4 ))
 		naytto.blit(instructions, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 25))
@@ -343,7 +375,11 @@ class GrabtheCash:
 		naytto.blit(info3, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 145))
 		naytto.blit(info4, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 185))
 		naytto.blit(iso_robo, (0, 0))
-		naytto.blit(iso_hirvio, (leveys - iso_hirvio.get_width() + 80, 0))
+		if (choose_game == 2):
+			naytto.blit(iso_hirvio, (leveys - iso_hirvio.get_width() + 80, 0))
+		else:
+			naytto.blit(iso_robo, (leveys - iso_robo.get_width(), 0))
+
 		pygame.display.update()
 	
 	# Game loop, checks keyboard info first, then opens start menu, fills board
