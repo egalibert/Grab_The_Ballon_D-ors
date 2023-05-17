@@ -1,4 +1,4 @@
-# Grab_The_Cash
+# Grab_The_Cash / Grab_The_Ballon D'ors
 Game made with pygame, where you collect Ballon Dors and dodge Messi. 
 
 Originally I needed to do a game on a course for Helsinki University "Ohjelmoinnin perusteet ja jatkokurssi 2023" and I decided to continue and make it better.
