@@ -5,13 +5,11 @@ pygame.init()
 leveys = 700
 korkeus = 520
 naytto = pygame.display.set_mode((leveys, korkeus))
-	#Kuvat
 
 	#Original Version
 # robo = pygame.image.load("robo.png")
 # coin = pygame.image.load("kolikko.png")
 # hirvio = pygame.image.load("hirvio.png")
-
 
 	#Football one
 robo = pygame.image.load("ronaldo.png")
@@ -68,7 +66,6 @@ class PowerUp:
 		if self.y > (korkeus - 50) or self.y > korkeus:
 			self.finished = True
 
-
 class Hirvio:
 	def __init__(self):
 		self.x = randint(0, leveys - 50)
@@ -123,6 +120,7 @@ class Robootti:
 		if self.alas and self.y < korkeus - robo_korkeus:
 			self.y += 3 * self.velocity
 
+	# Game class with all the information that is needed to keep during the game.
 class GrabtheCash:
 	def __init__(self):
 		pygame.display.set_caption("Grab The Ca$h")
@@ -150,9 +148,6 @@ class GrabtheCash:
 		self.kolikoita = 10
 		self.coins_made = 0
 		self.kolikot = []
-		# for i in range(self.kolikoita):
-		# 	i = Coins()
-		# 	self.kolikot.append(i)
 
 			#Viholliset
 		self.monsters = 5
@@ -168,6 +163,8 @@ class GrabtheCash:
 			p = PowerUp()
 			self.power_up_lista.append(p)
 
+	# Detects if player collides with a coin icon and increases counter if that happens.
+	# If the item is finished or is collected we remove it from the list and add a new one.
 	def detect_collision_coin(self):
 		while self.coins_made < self.kolikoita:
 			c = Coins()
@@ -183,6 +180,8 @@ class GrabtheCash:
 				self.kolikot.remove(c)
 				self.coins_made -= 1
 		
+	# Detects if player collides with a monster icon and reduces health if that happens.
+	# If the item is finished or is collected we remove it from the list and add a new one.
 	def detect_collision_hirvio(self):
 		for mon in self.mon_list:
 			if self.p1.x + self.r_leveys > mon.x + (h_w / 4) and self.p1.x < mon.x + h_w - (h_w / 3) and \
@@ -196,6 +195,8 @@ class GrabtheCash:
 				mon = Hirvio()
 				self.mon_list.append(mon)
 
+	# Detects if player collides with a powerup icon and acts accordingly.
+	# If the item is finished or is collected we remove it from the list and add a new one.
 	def detect_collision_power(self):
 		for p_up in self.power_up_lista:
 			if self.p1.x + self.r_leveys > p_up.x + (shoes.get_width() / 4) and self.p1.x < p_up.x + shoes.get_width() - (shoes.get_width() / 3) and \
@@ -203,7 +204,6 @@ class GrabtheCash:
 					if (p_up.valinta == 1):
 						self.p1.velocity += 0.2
 					if p_up.valinta == 2:
-						# self.robot = pygame.transform.scale(robo, (100, 150))
 						self.r_leveys /= 1.1
 						self.r_korkeus /= 1.1
 						self.robo = pygame.transform.scale(robo, (self.r_leveys, self.r_korkeus))
@@ -217,6 +217,8 @@ class GrabtheCash:
 				p_up = PowerUp()
 				self.power_up_lista.append(p_up)
 
+	# If the the player has no health left of counter is 100 game ends.
+	# The player gets shown an end screen dependinp of the outcome.
 	def endScreen(self):
 		run = True
 		while run:
@@ -250,7 +252,7 @@ class GrabtheCash:
 
 			pygame.display.update()
 		
-
+	# Keybinding for movement and difficulty selection.
 	def tapahtumat(self):
 		for tapahtuma in pygame.event.get():
 			if tapahtuma.type == pygame.KEYDOWN:
@@ -297,7 +299,7 @@ class GrabtheCash:
 
 			if tapahtuma.type == pygame.QUIT:
 				exit()
-
+	# Checking the coin icon, dropping it, and checking for collision.
 	def tarkasta_kolikko(self):
 		for kolikko in self.kolikot:
 			kolikko.tiputa_kolikko(self.counter, self.level)
@@ -305,6 +307,7 @@ class GrabtheCash:
 			naytto.blit(coin, (kolikko.x, kolikko.y))
 			self.detect_collision_coin()
 
+	# Checking the power-up icons, dropping them, and checking for collision.
 	def tarkasta_power_up(self):
 		for p_up in self.power_up_lista:
 			p_up.tiputa_power_up(self.counter, self.level)
@@ -312,51 +315,45 @@ class GrabtheCash:
 				naytto.blit(shoes, (p_up.x, p_up.y))
 			if (p_up.valinta == 2 and self.counter > 50):
 				naytto.blit(boxers, (p_up.x, p_up.y))
-			
 			self.detect_collision_power()
 
-
+	# Checking the monster icons, dropping them, and checking for collision.
 	def tarkasta_hirvio(self):
 		for monster in self.mon_list:
 			monster.tiputa_hirvio(self.counter, self.level)
 			naytto.blit(hirvio, (monster.x, monster.y))
 			self.detect_collision_hirvio()
 
-	def start_menu(self):
+	# When the game opens player reseves teh start menu with info and
+	# a possibility to choose difficulty
 
+	def start_menu(self):
 		naytto.fill((0, 0, 0))
 		title = font.render("Grab The Ballon D'ors", True, (200, 200, 0))
-
 		instructions = fontti.render("Use arrows to move, dodge Messi", True, (255, 255, 255))
 		info = fontti.render("Start by pressing 1 - 4", True, (255, 255, 255))
 		info2 = fontti.render("1 = Easy, 2 = Medium, 3 = Hard", True, (255, 255, 255))
 		info3 = fontti.render("4 = Impossible (Beware)", True, (255, 255, 255))
 		info4 = fontti.render("7 = CR7GOATMODE", True, (255, 255, 255))
 
-
 		naytto.blit(title, (leveys / 2 - title.get_width()/2, korkeus / 4 ))
-
-		# naytto.blit(start_button, (leveys / 2 - start_button.get_width()/2, korkeus / 2 + start_button.get_height()/2))
-
 		naytto.blit(instructions, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 25))
 		naytto.blit(info, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 65))
 		naytto.blit(info2, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 105))
 		naytto.blit(info3, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 145))
 		naytto.blit(info4, (leveys / 2 - instructions.get_width()/2, korkeus / 2 - (instructions.get_height()/2)+ 185))
-
-
 		naytto.blit(iso_robo, (0, 0))
 		naytto.blit(iso_hirvio, (leveys - iso_hirvio.get_width() + 80, 0))
 		pygame.display.update()
 	
-		
-
+	# Game loop, checks keyboard info first, then opens start menu, fills board
+	# Moves robot, checks all collectables and their collisins.
+	# If game ends enters EndScreen
 	def pyorita(self):
 		while (True):
 			self.tapahtumat()
 			if self.state == POISSA:
 				self.start_menu()
-				# self.make_coin_list()
 			if self.state == KAYNNISSA:
 				naytto.fill((50, 170, 50))
 				self.p1.liikuta_roboa(self)
