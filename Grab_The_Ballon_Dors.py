@@ -2,15 +2,17 @@ import pygame
 from pygame import mixer
 from random import *
 
-# mixer.init()
+mixer.init()
 pygame.init()
 
-choose_game = 2
+	# Choose 1 for Grab_The_Ca$h version
+	# Choose 2 for Grab_The_Ballon D'ors version
+choose_game = 1
 
-# mixer.music.load('seewy.mp3')
-# mixer.music.set_volume(0.2)
-
-# mixer.music.play()
+if choose_game == 2:
+	mixer.music.load('seewy.mp3')
+	mixer.music.set_volume(0.2)
+	mixer.music.play()
 
 leveys = 700
 korkeus = 520
