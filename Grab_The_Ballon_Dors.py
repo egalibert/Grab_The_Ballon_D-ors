@@ -72,6 +72,7 @@ font = pygame.font.SysFont('arial', 40)
 
 kello = pygame.time.Clock()
 
+	# PowerUp class has shoes and boxers that make player faster and smaller/
 class PowerUp:
 	def __init__(self):
 		self.valinta = randint(1, 2)
@@ -89,6 +90,7 @@ class PowerUp:
 		if self.y > (korkeus - 50) or self.y > korkeus:
 			self.finished = True
 
+	# Hirvio / Monster class is the enemy the player has to dodge or loses lives
 class Hirvio:
 	def __init__(self):
 		self.x = randint(0, leveys - 50)
@@ -107,6 +109,7 @@ class Hirvio:
 		if self.y > (korkeus - 50) or self.y > korkeus:
 			self.finished = True
 
+	# Coins / Ballon D'ors class is the collectibles the player has to get to increase counter
 class Coins:
 	def __init__(self):
 		self.x = randint(0, leveys - 50)
@@ -123,6 +126,7 @@ class Coins:
 		if self.y > korkeus - 50 or self.y > korkeus:
 			self.finished = True
 
+	# Robootti / Robot class is the player character 
 class Robootti:
 	def __init__(self, leveys, korkeus):
 		self.x = leveys
@@ -245,7 +249,6 @@ class GrabtheCash:
 	def endScreen(self):
 		run = True
 		while run:
-			# pygame.time.delay(100)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					pygame.quit()
@@ -253,7 +256,6 @@ class GrabtheCash:
 					if event.key == pygame.K_r:
 						main()
 			naytto.fill((0, 0, 0))
- 
 			currentScore = fontti.render(f"Final Score: {self.counter}", True, (255, 255, 255))
 			game_over = largeFont.render(f"GAME OVER", True, (255, 255, 255))
 			if choose_game == 2:
@@ -262,6 +264,7 @@ class GrabtheCash:
 			else:
 				goat = fontti.render(f"Better luck next time!", True, (255, 255, 255))
 				goat2 = fontti.render(f"You are a master gamer!", True, (255, 255, 255))
+
 			restart = fontti.render(f"Press R to restart:", True, (255,255,255))
 			win = largeFont.render(f"YOU WON!", True, (255, 255, 255))
 			seewy = largeFont.render(f"SIIIII!!", True, (255, 255, 255))
@@ -270,7 +273,6 @@ class GrabtheCash:
 				naytto.blit(game_over, (leveys / 2 - (game_over.get_width()/2), korkeus / 2 + (game_over.get_height()/2 - 300)))
 				naytto.blit(goat, (leveys / 2 - (goat.get_width()/2), korkeus / 2 + (goat.get_height()/2 - 100)))
 				naytto.blit(currentScore, (leveys / 2 - currentScore.get_width()/2, korkeus / 2 + currentScore.get_height()/2))
-
 			if self.counter == 100:
 				naytto.blit(win, (leveys / 2 - (win.get_width()/2), 50))
 				naytto.blit(goat2, (leveys / 2 - (goat2.get_width()/2), korkeus / 2 + (goat2.get_height()/2 - 100)))
@@ -313,7 +315,6 @@ class GrabtheCash:
 						self.kolikoita = 19
 						self.state = KAYNNISSA
 					
-
 			if tapahtuma.type == pygame.KEYUP:
 				if tapahtuma.key == pygame.K_LEFT:
 					self.p1.vasemmalle = False
@@ -353,7 +354,6 @@ class GrabtheCash:
 
 	# When the game opens player reseves teh start menu with info and
 	# a possibility to choose difficulty
-
 	def start_menu(self):
 		naytto.fill((0, 0, 0))
 		if (choose_game == 2):
@@ -380,7 +380,6 @@ class GrabtheCash:
 			naytto.blit(iso_hirvio, (leveys - iso_hirvio.get_width() + 80, 0))
 		else:
 			naytto.blit(iso_robo, (leveys - iso_robo.get_width(), 0))
-
 		pygame.display.update()
 	
 	# Game loop, checks keyboard info first, then opens start menu, fills board
