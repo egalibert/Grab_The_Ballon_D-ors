@@ -72,7 +72,7 @@ font = pygame.font.SysFont('arial', 40)
 
 kello = pygame.time.Clock()
 
-	# PowerUp class has shoes and boxers that make player faster and smaller/
+	# PowerUp class has shoes and boxers that make player faster and smaller.
 class PowerUp:
 	def __init__(self):
 		self.valinta = randint(1, 2)
@@ -90,7 +90,7 @@ class PowerUp:
 		if self.y > (korkeus - 50) or self.y > korkeus:
 			self.finished = True
 
-	# Hirvio / Monster class is the enemy the player has to dodge or loses lives
+	# Hirvio / Monster class is the enemy the player has to dodge or loses lives.
 class Hirvio:
 	def __init__(self):
 		self.x = randint(0, leveys - 50)
