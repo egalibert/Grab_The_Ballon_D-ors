@@ -2,6 +2,7 @@ import pygame
 from pygame import mixer
 from random import *
 
+	# For music in Ballon d'or version
 mixer.init()
 pygame.init()
 
